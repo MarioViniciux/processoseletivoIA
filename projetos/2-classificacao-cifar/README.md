@@ -140,7 +140,7 @@ Como funciona a técnica: durante o treinamento padrão, os pesos e os vieses da
 ### 4️⃣ Resultados Obtidos
 
 #### Acurácia de validação:
-Após o término do treinamento, o modelo atingiu uma acurácia de validação final de 76.49%. Este resultado demonstra a eficácia da arquitetura convolucional e das técnicas de regularização aplicadas no combate ao overfitting para as imagens complexas do dataset CIFAR-10.
+Após o término do treinamento, o modelo atingiu uma acurácia de validação final de 75.31%. Este resultado demonstra a eficácia da arquitetura convolucional e das técnicas de regularização aplicadas no combate ao overfitting para as imagens complexas do dataset CIFAR-10.
 
 #### Comparativo de tamanho dos arquivos:
 A aplicação da técnica de Quantização de Faixa Dinâmica durante a conversão para TensorFlow Lite cumpriu seu papel de compressão, tornando o modelo viável para dispositivos de borda. Os tamanhos finais em disco foram:
@@ -173,11 +173,13 @@ Rodando inferência em 5 amostras usando model.tflite:
 
 Amostra 1: predito=cat | real=cat <br>
 Amostra 2: predito=ship | real=ship <br>
-Amostra 3: predito=ship | real=ship <br>
+Amostra 3: predito=automobile | real=ship <br>
 Amostra 4: predito=airplane | real=airplane <br>
 Amostra 5: predito=deer | real=frog
 
 #### Observações:
-Neste lote de testes, o modelo otimizado apresentou um desempenho de 80% de acerto (4 de 5 amostras). O modelo manteve grande firmeza nas predições estruturais, identificando perfeitamente veículos (ship e airplane) e acertando a difícil classe cat.
+Neste lote específico de testes, o modelo otimizado apresentou um desempenho de 60% de acerto (3 de 5 amostras). Os erros observados são, na verdade, excelentes exemplos dos desafios inerentes à classificação no dataset CIFAR-10.
 
-O ponto de maior interesse analítico ocorreu na Amostra 5, onde o modelo confundiu um sapo (frog) com um cervo (deer). Esse tipo de erro (falso-positivo interclasses) é muito comum e compreensível no CIFAR-10 devido à limitação extrema de resolução das imagens (32x32 pixels). Ambas as classes (sapos e cervos) costumam ser fotografadas em cenários naturais, com forte predominância de fundos verdes (grama/folhas) e marrons (terra/troncos). Como a rede tem um limite espacial para extrair os detalhes do animal, ela pode acabar baseando parte de sua decisão no mapa de cores do fundo da imagem (o contexto), levando a esse erro justificável.
+Na Amostra 1, a rede confundiu um gato (cat) com um cachorro (dog). Este é o falso-positivo interclasses mais clássico desta base de dados. Devido à resolução extremamente baixa das imagens (32x32 pixels), detalhes finos que diferenciam os dois animais (como o formato exato do focinho ou das pupilas) são perdidos, fazendo com que seus mapas de características estruturais (animais de quatro patas com pelagem) fiquem quase idênticos para a rede.
+
+Na Amostra 3, o modelo classificou um navio (ship) como um automóvel (automobile). Como ambos são veículos construídos com materiais rígidos, chapas metálicas e linhas mais retas, o modelo pode ter focado excessivamente no formato do objeto, falhando em interpretar corretamente o contexto de fundo (água vs. asfalto) para desempatar a predição.
